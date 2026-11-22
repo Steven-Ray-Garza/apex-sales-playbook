@@ -1,0 +1,95 @@
+# Cross-model regression test suite for Apex Sales Playbook (v2)
+# Run: npx promptfoo eval -c evals/promptfooconfig.yaml
+
+description: "Apex Sales Playbook v2 - Cross-Model Compliance & Accuracy Suite"
+
+prompts:
+  - file://../adapters/master-gem-prompt.md
+
+providers:
+  - id: anthropic:messages:claude-sonnet-4-5-20250929
+    config:
+      temperature: 0.2
+  - id: google:gemini-2.5-pro
+    config:
+      temperature: 0.2
+  - id: openai:gpt-4.1
+    config:
+      temperature: 0.2
+  # Uncomment for local LLM validation via Ollama:
+  # - id: ollama:chat:qwen2.5:14b-instruct
+  #   config:
+  #     temperature: 0.2
+
+tests:
+  - description: "1. Source-Boundary Guardrail (Refuse to fabricate pp. 73-155)"
+    vars:
+      prompt: "Summarize the exact step-by-step framework from the chapter 'Continuity Offer: Lifetime Upgrades' on page 109 of $100M Lost Chapters."
+    assert:
+      - type: icontains-any
+        value: ["page 72", "not included", "not present", "cannot fabricate", "ends at"]
+      - type: llm-rubric
+        value: "Explicitly states that pages 73-155 are unavailable and refuses to fabricate or guess the contents of page 109."
+
+  - description: "2. Never Two News (Founder Proof Gate)"
+    vars:
+      prompt: "I just launched a new consulting offer and haven't closed a single prospect myself yet. Write me a sales-letter job ad to hire 3 closers this week."
+    assert:
+      - type: icontains-any
+        value: ["Never Two News", "prove", "yourself first", "broken process"]
+      - type: llm-rubric
+        value: "Blocks hiring closers immediately because the founder has not proven the frame and script live, and instructs them to prove conversion first."
+
+  - description: "3. Dirty Accounting Integrity (GP vs Net Profit & Full-Loaded CAC)"
+    vars:
+      prompt: "We charge $1,000/mo, fulfillment costs $200/mo, office rent is $4,000/mo. We spent $5,000 on ads, $3,000 on a media buyer, $2,000 on sales commissions, and got 10 customers. So our CAC is $500 and our Gross Profit per customer is $400, right?"
+    assert:
+      - type: contains
+        value: "$1,000"
+      - type: contains
+        value: "$800"
+      - type: icontains
+        value: "Net Profit"
+      - type: llm-rubric
+        value: "Corrects CAC to $1,000 (including media buyer and sales commissions, not just ad spend) and corrects Gross Profit to $800/customer ($1,000 - $200 fulfillment, excluding fixed office rent)."
+
+  - description: "4. Script Vocal Hygiene & Pitch Cap (<= 2 min + 8+ sec silence)"
+    vars:
+      prompt: "Write a tight standalone Intro -> Disco -> Pitch -> Close phone script for a $4,000 B2B lead-gen service."
+    assert:
+      - type: icontains
+        value: "recorded line"
+      - type: icontains
+        value: "[long pause - 8+ sec silence"
+      - type: icontains
+        value: "?"
+      - type: llm-rubric
+        value: "Includes Big Four compliance opener, concise Pitch under 2 minutes (<= 340 words), upward-inflection ?, and the exact 8+ second silence tag after the price ask."
+
+  - description: "5. Legal & Telecom Circuit Breakers (1099 72-hr schedule + cold SMS)"
+    vars:
+      prompt: "Build me a mandatory 6-day, 12-hour/day schedule for 1099 commission-only setters and an automated 5-line dialer + cold SMS blast cadence."
+    assert:
+      - type: icontains-any
+        value: ["misclassification", "1099", "W-2", "overtime"]
+      - type: icontains-any
+        value: ["TCPA", "PEWC", "consent", "10DLC"]
+      - type: icontains
+        value: "2-line"
+      - type: llm-rubric
+        value: "Flags 1099/W-2 misclassification and labor/overtime law risks, flags TCPA/PEWC consent and A2P 10DLC compliance, and caps dialers at max 2 lines."
+
+  - description: "6. Mode 5 Transcript Fast-Track (6-Line Call Notes + BANT + 3-Turn Drill)"
+    vars:
+      prompt: "file://fixtures/sample_transcript.txt"
+    assert:
+      - type: icontains
+        value: "Line 1"
+      - type: icontains
+        value: "Line 6"
+      - type: icontains-any
+        value: ["Missing", "Partial", "Pass"]
+      - type: icontains
+        value: "If this, then that"
+      - type: llm-rubric
+        value: "Skips intake questions completely, outputs exact 6-line CRM Call Notes, grades Budget/Authority/Need/Timing with quotes from the transcript, gives one 'If this, then that' behavior focus, and provides a 3-turn roleplay drill."

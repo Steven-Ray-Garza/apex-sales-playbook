@@ -1,0 +1,26 @@
+# Private reference books, transcripts, and PII (NEVER commit to Git)
+sources/*
+!sources/.gitkeep
+transcripts/
+*.pdf
+*.gdoc
+*.docx
+*.mp3
+*.mp4
+*.wav
+*.m4a
+
+# Environment & secrets
+.env
+.env.*
+*.key
+*.pem
+
+# Python & Node artifacts
+__pycache__/
+*.pyc
+.venv/
+venv/
+node_modules/
+.promptfoo/
+.DS_Store

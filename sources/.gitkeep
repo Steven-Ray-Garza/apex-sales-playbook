@@ -1,0 +1,2 @@
+# Keep private copyrighted reference files local-only in this folder.
+# Everything in sources/ except this file is gitignored.

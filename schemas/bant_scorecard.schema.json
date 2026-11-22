@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BANTAndScriptScorecard",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "bant_grades",
+    "script_audit",
+    "one_behavior_focus",
+    "roleplay_drill_3_turns",
+    "seven_day_leading_indicator"
+  ],
+  "properties": {
+    "bant_grades": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "budget",
+        "authority",
+        "need",
+        "timing"
+      ],
+      "properties": {
+        "budget": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "evidence"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "Pass",
+                "Partial",
+                "Missing"
+              ]
+            },
+            "evidence": {
+              "type": "string"
+            }
+          }
+        },
+        "authority": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "evidence"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "Pass",
+                "Partial",
+                "Missing"
+              ]
+            },
+            "evidence": {
+              "type": "string"
+            }
+          }
+        },
+        "need": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "evidence"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "Pass",
+                "Partial",
+                "Missing"
+              ]
+            },
+            "evidence": {
+              "type": "string"
+            }
+          }
+        },
+        "timing": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "evidence"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "Pass",
+                "Partial",
+                "Missing"
+              ]
+            },
+            "evidence": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "script_audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "big_four_compliance",
+        "small_yes_obtained",
+        "pain_cycle_quantified",
+        "pitch_under_2_min",
+        "eight_sec_post_ask_silence",
+        "question_only_aaa_looping",
+        "notes"
+      ],
+      "properties": {
+        "big_four_compliance": {
+          "type": "boolean"
+        },
+        "small_yes_obtained": {
+          "type": "boolean"
+        },
+        "pain_cycle_quantified": {
+          "type": "boolean"
+        },
+        "pitch_under_2_min": {
+          "type": "boolean"
+        },
+        "eight_sec_post_ask_silence": {
+          "type": "boolean"
+        },
+        "question_only_aaa_looping": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "one_behavior_focus": {
+      "type": "string",
+      "description": "Single observable coaching rule formatted as 'If this, then that'."
+    },
+    "roleplay_drill_3_turns": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "turn",
+          "prospect_prompt",
+          "ideal_rep_response"
+        ],
+        "properties": {
+          "turn": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3
+          },
+          "prospect_prompt": {
+            "type": "string"
+          },
+          "ideal_rep_response": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "seven_day_leading_indicator": {
+      "type": "string"
+    }
+  }
+}

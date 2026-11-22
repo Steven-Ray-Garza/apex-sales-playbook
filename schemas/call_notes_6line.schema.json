@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SixLineCRMCallNotes",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "line_1_avatar_and_context",
+    "line_2_quantified_gap",
+    "line_3_core_pain_and_stakes",
+    "line_4_bant_and_deal_breakers",
+    "line_5_predicted_objections_and_proof",
+    "line_6_next_step_and_tone_intel"
+  ],
+  "properties": {
+    "line_1_avatar_and_context": {
+      "type": "string",
+      "description": "Prospect role, business/situation, lead source, and VSSL consumption status."
+    },
+    "line_2_quantified_gap": {
+      "type": "string",
+      "description": "Exact Current State vs. Desired State numbers."
+    },
+    "line_3_core_pain_and_stakes": {
+      "type": "string",
+      "description": "Primary obstacle plus attached dollar figure, timeline, or affected person."
+    },
+    "line_4_bant_and_deal_breakers": {
+      "type": "string",
+      "description": "Budget, Authority (all decision makers?), Need, Timing, plus logistics or value deal breakers."
+    },
+    "line_5_predicted_objections_and_proof": {
+      "type": "string",
+      "description": "Anticipated smoke screens/objections plus matched case studies or testimonials."
+    },
+    "line_6_next_step_and_tone_intel": {
+      "type": "string",
+      "description": "Exact BAMFAM/handoff slot, prospect communication style (needs challenge vs. back-foot), and required follow-up."
+    }
+  }
+}
