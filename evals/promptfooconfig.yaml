@@ -1,7 +1,7 @@
-# Cross-model regression test suite for Apex Sales Playbook (v2)
+# Cross-model regression test suite for Apex Sales Playbook (v3 - 6 Modes)
 # Run: npx promptfoo eval -c evals/promptfooconfig.yaml
 
-description: "Apex Sales Playbook v2 - Cross-Model Compliance & Accuracy Suite"
+description: "Apex Sales Playbook v3 - Cross-Model Compliance, Accuracy & Roleplay Suite"
 
 prompts:
   - file://../adapters/master-gem-prompt.md
@@ -16,7 +16,7 @@ providers:
   - id: openai:gpt-4.1
     config:
       temperature: 0.2
-  # Uncomment for local LLM validation via Ollama:
+  # Uncomment for offline local LLM validation via Ollama:
   # - id: ollama:chat:qwen2.5:14b-instruct
   #   config:
   #     temperature: 0.2
@@ -79,7 +79,7 @@ tests:
       - type: llm-rubric
         value: "Flags 1099/W-2 misclassification and labor/overtime law risks, flags TCPA/PEWC consent and A2P 10DLC compliance, and caps dialers at max 2 lines."
 
-  - description: "6. Mode 5 Transcript Fast-Track (6-Line Call Notes + BANT + 3-Turn Drill)"
+  - description: "6. Mode 5B Post-Call Transcript Fast-Track (6-Line Call Notes + BANT + 3-Turn Drill)"
     vars:
       prompt: "file://fixtures/sample_transcript.txt"
     assert:
@@ -93,3 +93,21 @@ tests:
         value: "If this, then that"
       - type: llm-rubric
         value: "Skips intake questions completely, outputs exact 6-line CRM Call Notes, grades Budget/Authority/Need/Timing with quotes from the transcript, gives one 'If this, then that' behavior focus, and provides a 3-turn roleplay drill."
+
+  - description: "7. Mode 5A Pre-Call Kill-Mode Battle Card Fast-Track"
+    vars:
+      prompt: "Pre-call intake notes: Prospect is Dana, owns a $65k/mo dental clinic, wants $120k/mo in 6 months, skipped the 10-min VSSL, co-owns with her brother Mark who is NOT on today's call, worried about burning cash after a bad SEO agency last year."
+    assert:
+      - type: icontains-any
+        value: ["Battle Card", "Pre-Call", "VSSL", "10-minute"]
+      - type: icontains-any
+        value: ["Mark", "Decision Maker", "Authority", "burn you twice"]
+      - type: llm-rubric
+        value: "Skips intake questions and outputs a 30-second Pre-Call Battle Card covering VSSL status, quantified gap hypotheses, 2 Pain-Cycle probes, predicted #1 objection + analogy, and a morning-of proof arrow."
+
+  - description: "8. Mode 6 Interactive Roleplay Simulator (Tier 2 Pressure Prospect)"
+    vars:
+      prompt: "Let's roleplay Tier 2 Pressure Prospect. I sell a $5,000/mo B2B outbound system. Start at the top of the Close right after I ask for the $5,000."
+    assert:
+      - type: llm-rubric
+        value: "Skips intake questions, drops straight into character as a realistic guarded B2B buyer throwing a crisp 1-4 sentence smoke-screen objection after the $5,000 ask, and waits for the rep's response without lecturing."

@@ -1,6 +1,6 @@
 ---
 name: vssl-script-engineer
-description: Engineer high-converting Video Sales Letters (VSSL Sandwich), BANT qualification forms, Intro-Disco-Pitch-Close call scripts with vocal and pause tags, pitch analogies, AAA objection handling loops, BAMFAM follow-ups, and 3-step referral scripts. Use when writing or auditing VSSL scripts, pre-call indoctrination funnels, sales call scripts, objection trees, or closing sequences. Do NOT use for offer math (use cfa-offer-architect), recruiting/bootcamps (use sales-recruiting-bootcamp), floor ops (use sales-floor-director), or raw transcripts (use transcript-audit-mode).
+description: Engineer high-converting Video Sales Letters (VSSL Sandwich), BANT qualification forms, Intro-Disco-Pitch-Close call scripts with vocal and pause tags, active-listening mirroring, enterprise 80/20 multi-call scripts, the full 12-analogy bank, AAA objection handling loops, BAMFAM follow-ups, and 3-step referral scripts. Use when writing or auditing VSSL scripts, pre-call indoctrination funnels, sales call scripts, objection trees, or closing sequences. Do NOT use for offer math (use cfa-offer-architect), recruiting/bootcamps (use sales-recruiting-bootcamp), floor ops (use sales-floor-director), transcript audits (use transcript-audit-mode), or live interactive roleplay (use roleplay-sparring-partner).
 ---
 
 # Mode 2: VSSL Sandwich, Script, and Objection Engineer
@@ -10,20 +10,26 @@ description: Engineer high-converting Video Sales Letters (VSSL Sandwich), BANT 
 - **VSSL 1 - Pre-Booking (High Friction):** Keep short (`3-7 minutes`) to protect opt-in flow. Pair with **BANT** qualification fields (Budget, Authority, Need, Timing) and proof stacked under the scheduler.
 - **VSSL 2 - Post-Booking (Zero Friction):** Make comprehensive (`10-22+ minutes`) to sell the *show* and pre-handle top objections. Frame watching as a time-saver: `"Watch this 10-minute video before our call - it will save us 35 minutes so we can focus entirely on your situation."`
 - **VSSL 3 - Mid-Process (Multi-Call or In-Person iPad):** Deploy between intake/walk-through and quote presentation. Never email quotes cold.
-- **Living VSSL and Avatar Paths:** Treat every VSSL as a living document - splice in new objection FAQs whenever floor reps report a recurring new objection, and build separate VSSL paths per avatar.
+- **Living VSSL and Avatar Paths:** Treat every VSSL as a living document - splice in new objection FAQs whenever floor reps report a recurring new objection (fed from Mode 5C Weekly Flywheel), and build separate VSSL paths per avatar.
 - **5-Part VSSL Blueprint:** (1) `60-Second` Intro (Promise, Pain, varied Proof, Plan, Visual Roadmap) -> (2) Old Way vs. New Way (Unique Mechanism) -> (3) Objection FAQ Gauntlet 1-N (What they think -> Why wrong -> What is right -> Proof) -> (4) Personalized Diagnostic CTA (low-friction customization question proving consumption) -> (5) Proof Gauntlet (`10-15 minutes` of compliant before/after case studies on the back half).
 
 ## 2B. Call Script Engine (`Intro -> Disco -> Pitch -> Close`)
 
 Validate finished scripts with `tools/calculators.py` (`audit_script_metrics`) when available.
 
+- **Script Concision, Active Listening, and Enterprise 80/20 Rules:**
+  - *Zero-Bloat Audit ("Sneezing Trap"):* Every word in a script must have a job; strip superstitious filler lines that crept in when easy buyers closed anyway (cut `50-75%` bloat).
+  - *Active-Listening Fix for Sounding Scripted:* Memorize the script verbatim, then mirror the last phrase the prospect spoke back to them with an upward pitch inflection (`?`) before advancing.
+  - *Enterprise Multi-Call 80/20 Rule:* In `8 out of 10` enterprise sales, run the *same* core script up the champion ladder (`~5x`) to the check-writer; only write separate scripts per call in the `2 out of 10` cases with genuinely distinct buyer personas evaluating separate value props.
+
 1. **Intro (Tight and Compliant):** Deliver the Big Four opener -> State agenda with authority -> Get small yes (`"Sound good?"`). If the prospect skipped the VSSL, pause and ask them to watch the `10-minute` video to save `35 minutes`.
 2. **Disco ("Pulling Teeth" Pain Cycle):** Establish quantified **Current State vs. Desired State** gap -> Run Pain Cycle (identify obstacle -> ask `"Why?"` -> issue commands: `"Tell me more about that"`, `"Say more about that"`, `"Can you give me an example?"` -> attach a dollar figure, timeline, or affected person) -> Deliver 3-sentence Recap, Label, and Confirm (`"Does that sound right?"`).
-3. **Pitch (`<= 2 Minutes` / `<= 120 Seconds`, `<= 340 words` at `150-170 WPM`, Rule of Threes):** Map strictly to stated pains (leave unmentioned features in your back pocket) using 3 cycles of `Stated Problem -> Feature/Solution -> Edify Delivery Specialist (Secretary-to-Surgeon or Mechanic frame) -> Outcome/Benefit -> Micro-Confirm`. Anchor with 1 analogy from the **Analogy Bank**:
+3. **Pitch (`<= 2 Minutes` / `<= 120 Seconds`, `<= 340 words` at `150-170 WPM`, Rule of Threes):** Map strictly to stated pains (leave unmentioned features in your back pocket) using 3 cycles of `Stated Problem -> Feature/Solution -> Edify Delivery Specialist (Secretary-to-Surgeon or Mechanic frame) -> Outcome/Benefit -> Micro-Confirm`. Anchor with 1 analogy from the **12-Analogy Bank**:
    - *Completeness:* Car (wheels/engine/gas) or 3-Legged Stool.
    - *Constraint:* Weakest Link or 4-Lane Highway Bottleneck.
    - *Time Horizon:* Braces (`2-3 years`) or Layering a Tan (`20 straight hours` burns).
    - *High Stakes vs. Price:* Cheapest Surgeon, Tattoo Artist, or Parachute.
+   - *Indecision / Teetering on Action:* `"The water's not getting any warmer the longer you wait to jump in"` or `"Your ship's not sinking any slower while picking between two buckets"`.
    - *Certainty:* Gravity or Cake Recipe.
    - *Strategy Options:* Multiple Ways Up a Mountain vs. Don Shula Frame.
 4. **Close and Looping Matrix:**

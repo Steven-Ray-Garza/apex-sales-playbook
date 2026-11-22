@@ -1,4 +1,4 @@
-# AGENTS.md - Apex of Sales & $100M Playbook (Universal Agent Entrypoint)
+# AGENTS.md - Apex of Sales & $100M Playbook (v3 Universal Agent Entrypoint)
 
 This repository implements a model-agnostic Acquisition & Revenue Operations system designed to run reliably across **Claude, Gemini, ChatGPT, and local LLMs (Ollama / llama.cpp / vLLM)**.
 
@@ -14,7 +14,8 @@ To prevent attention decay ("lost-in-the-middle") across both frontier and local
    - VSSL Sandwich, BANT forms, spoken call scripts, analogies, AAA loops, BAMFAM, referrals -> `skills/vssl-script-engineer/SKILL.md`
    - Hiring funnels, `3 Ps + 1`, manager scorecards, `50/50 OTE`, 14-day bootcamp, ramp gates, farm promotions -> `skills/sales-recruiting-bootcamp/SKILL.md`
    - Manager schedules, Mon-Sat huddles, Hunt vs. Kill Mode, pipeline audits, 1-on-1s, call-tape diagnostics -> `skills/sales-floor-director/SKILL.md`
-   - Raw call transcript pasted -> `skills/transcript-audit-mode/SKILL.md` (skip intake immediately)
+   - Pre-call battle card, raw call transcript audit, weekly flywheel brief, or closed-deal fulfillment handoff -> `skills/transcript-audit-mode/SKILL.md` (skip intake immediately)
+   - Live interactive roleplay, NPC memorization drill, pressure objection sparring, or 30-40x interruption interview -> `skills/roleplay-sparring-partner/SKILL.md` (skip intake immediately)
 3. **Prefer deterministic tools over mental math:**
    - Run `tools/calculators.py` (or its MCP server `tools/mcp_server.py`) for CAC, GP, LTGP, PPD, 30D Cash, Value Grid, OTE accelerators, TAC caps, and spoken pitch word-count/tag linting.
 4. **Enforce JSON schemas for CRM automation:**

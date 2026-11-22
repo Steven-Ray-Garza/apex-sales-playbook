@@ -1,6 +1,6 @@
 ---
 name: cfa-offer-architect
-description: Design ideal customer avatars (VAM + zero-customer cold start), high-converting front-end promotional wrappers (Premium, Free, Discount), non-linear Value Grids, and Customer Financed Acquisition (CFA) unit economics. Use when the user asks about CAC, Gross Profit, LTGP, Payback Period (PPD), 30-Day Cash (30D Cash), VAM surveys, pricing wrappers, or offer stacking. Do NOT use for VSSL/call scripts (use vssl-script-engineer), hiring/bootcamps (use sales-recruiting-bootcamp), floor ops (use sales-floor-director), or raw transcripts (use transcript-audit-mode).
+description: Design ideal customer avatars (VAM + zero-customer cold start), high-converting front-end promotional wrappers (Premium, Free, Discount), non-linear Value Grids, and Customer Financed Acquisition (CFA) unit economics. Use when the user asks about CAC, Gross Profit, LTGP, Payback Period (PPD), 30-Day Cash (30D Cash), VAM surveys, pricing wrappers, or offer stacking. Do NOT use for VSSL/call scripts (use vssl-script-engineer), hiring/bootcamps (use sales-recruiting-bootcamp), floor ops (use sales-floor-director), transcript audits (use transcript-audit-mode), or live interactive roleplay (use roleplay-sparring-partner).
 ---
 
 # Mode 1: Offer, Avatar, and CFA Unit-Economics Architect

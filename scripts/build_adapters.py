@@ -3,13 +3,15 @@
 
 Outputs:
   - adapters/master-gem-prompt.md         (Gemini Gems, Claude Projects, Custom GPTs)
-  - adapters/system-prompts-by-mode/*.md  (Lightweight single-mode prompts for 7B-32B local LLMs)
+  - adapters/system-prompts-by-mode/*.md  (Standalone single-mode prompts WITH YAML frontmatter
+                                           preserved for 1-click pasting into Gemini Skill Management
+                                           and lightweight loading on 7B-32B local LLMs)
   - adapters/ollama/Modelfile             (Ready-to-run Ollama Modelfile using core router + guardrails)
 
 Also validates:
   - No corrupted/stripped math thresholds (blank spaces before 'minutes', 'calls', empty '()')
-  - Pure ASCII punctuation in operators (no stray Unicode math arrows/inequalities)
-  - Approximate token budgets per compiled adapter
+  - Pure ASCII punctuation in operators (no stray Unicode math arrows/inequalities/em-dashes)
+  - Consistent LF line endings across Windows & Linux CI (zero git diff drift)
 """
 
 from __future__ import annotations
@@ -29,11 +31,27 @@ SKILL_ORDER = [
     "sales-recruiting-bootcamp",
     "sales-floor-director",
     "transcript-audit-mode",
+    "roleplay-sparring-partner",
 ]
 
 
-def strip_frontmatter(md_text: str) -> str:
-    return re.sub(r"^---\n.*?\n---\n+", "", md_text, flags=re.S).strip()
+def read_clean(path: Path) -> str:
+    """Read UTF-8 (stripping any Windows UTF-8 BOM) and normalize CRLF -> LF."""
+    return path.read_text(encoding="utf-8-sig").replace("\r\n", "\n").replace("\r", "\n")
+
+
+def write_lf(path: Path, text: str) -> None:
+    """Write clean UTF-8 (no BOM) with LF line endings for Windows/Linux CI parity."""
+    with path.open("w", encoding="utf-8", newline="\n") as fh:
+        fh.write(text)
+
+
+def split_frontmatter(md_text: str) -> tuple[str, str]:
+    """Return (frontmatter_block_or_empty, markdown_body)."""
+    m = re.match(r"^(---\n.*?\n---\n+)", md_text, flags=re.S)
+    if not m:
+        return "", md_text.strip()
+    return m.group(1).strip(), md_text[m.end():].strip()
 
 
 def approx_tokens(text: str) -> int:
@@ -53,8 +71,8 @@ def lint_markdown(name: str, text: str) -> list[str]:
 
 
 def build() -> int:
-    router = (CORE_DIR / "router.md").read_text(encoding="utf-8").strip()
-    guardrails = (CORE_DIR / "guardrails.md").read_text(encoding="utf-8").strip()
+    router = read_clean(CORE_DIR / "router.md").strip()
+    guardrails = read_clean(CORE_DIR / "guardrails.md").strip()
 
     all_issues: list[str] = []
     all_issues.extend(lint_markdown("core/router.md", router))
@@ -66,19 +84,21 @@ def build() -> int:
 
     for skill_name in SKILL_ORDER:
         skill_path = SKILLS_DIR / skill_name / "SKILL.md"
-        raw = skill_path.read_text(encoding="utf-8")
-        body = strip_frontmatter(raw)
-        all_issues.extend(lint_markdown(f"skills/{skill_name}/SKILL.md", body))
+        raw = read_clean(skill_path)
+        frontmatter, body = split_frontmatter(raw)
+        all_issues.extend(lint_markdown(f"skills/{skill_name}/SKILL.md", raw))
         master_sections.append(body)
 
-        single_mode = f"{router}\n\n{guardrails}\n\n---\n\n{body}\n"
+        # Standalone single-mode prompt preserving YAML frontmatter for Gemini Skill Management
+        header = f"{frontmatter}\n\n" if frontmatter else ""
+        single_mode = f"{header}{router}\n\n{guardrails}\n\n---\n\n{body}\n"
         out_path = by_mode_dir / f"{skill_name}.md"
-        out_path.write_text(single_mode, encoding="utf-8")
+        write_lf(out_path, single_mode)
         print(f"Built {out_path.relative_to(REPO_ROOT)} (~{approx_tokens(single_mode)} tokens)")
 
     master_text = "\n\n---\n\n".join(master_sections) + "\n"
     master_out = ADAPTERS_DIR / "master-gem-prompt.md"
-    master_out.write_text(master_text, encoding="utf-8")
+    write_lf(master_out, master_text)
     print(f"Built {master_out.relative_to(REPO_ROOT)} (~{approx_tokens(master_text)} tokens)")
 
     ollama_dir = ADAPTERS_DIR / "ollama"
@@ -96,7 +116,7 @@ def build() -> int:
         '"""\n'
     )
     modelfile_out = ollama_dir / "Modelfile"
-    modelfile_out.write_text(modelfile, encoding="utf-8")
+    write_lf(modelfile_out, modelfile)
     print(f"Built {modelfile_out.relative_to(REPO_ROOT)} (~{approx_tokens(ollama_system)} system tokens)")
 
     if all_issues:

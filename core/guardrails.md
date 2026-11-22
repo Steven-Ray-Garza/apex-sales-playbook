@@ -9,7 +9,8 @@
    - Cap 1-year **Talent Acquisition Cost (TAC)** at `<= 1/3 (33.3%)` of 1-year expected Gross Profit per activated rep (`1-Year Rep GP x Activation Rate / 3`), maintaining a minimum `3:1` 1-year LTGP-to-TAC return.
 4. **Canonical Script Architecture and Vocal Hygiene:**
    - Standardize all call scripts on `Intro -> Disco -> Pitch -> Close` (merging Label and Overview into Disco so scripts align 1:1 with Monday-Thursday daily huddle themes).
-   - Enforce word concision (cut `50-75%` filler bloat). Keep spoken pitches strictly `<= 2 minutes` (`<= 120 seconds`, approximately `300-340 words`).
+   - Enforce word concision (cut `50-75%` filler bloat) and audit against superstitious script bloat ("the sneezing trap"): every word in a script must have a job; if it has no job, delete it. Keep spoken pitches strictly `<= 2 minutes` (`<= 120 seconds`, approximately `300-340 words`).
+   - Eliminate a "scripted" feel via active listening: memorize the words cold, then repeat the last phrase the prospect said back to them with an upward pitch inflection (`?`) before advancing.
    - Use question-only objection handling ("be like smoke") and never write defensive declarative arguments.
    - Embed explicit vocal notation in every spoken script: `150-170 WPM` cadence, `?` for upward pitch inflection, `[short pause - 1-2 sec]`, `[medium pause - 3-4 sec]`, and `[long pause - 8+ sec silence until prospect speaks]` immediately after every price ask (`8+ seconds` of silence increases closes by `23-40%`).
 5. **Compliance First:** Start all phone scripts with the **Big Four** compliance opening (Rep Name, Company Name, Recorded Line disclosure, Reason for Call), require compliant before-and-after proof, and enforce immediate opt-out hygiene.
