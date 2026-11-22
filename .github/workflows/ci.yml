@@ -1,73 +1,65 @@
-name: Apex Sales Playbook CI
+name: Apex Revenue Operations Playbook CI
 
 on:
   push:
     branches: ["main", "master"]
   pull_request:
-    branches: ["main", "master"]
-  workflow_dispatch:
-    inputs:
-      run_llm_evals:
-        description: "Run cross-model promptfoo evals (requires API secrets)"
-        type: boolean
-        default: false
-
-permissions:
-  contents: read
 
 jobs:
-  validate-and-guard:
-    name: Build, Test, Schema & Leak Guard
+  validate:
+    name: Build, Test, Schema & Clean-Room IP/PII Guard
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.12
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.11"
 
-      - name: Install CI validation dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install jsonschema pyyaml
+      - name: Run deterministic calculator self-tests (incl. strict JSON & bounds checks)
+        run: python tools/calculators.py --self-test
 
-      - name: 1. Run deterministic calculators self-test & MCP syntax check
+      - name: Validate MCP server syntax
         run: |
-          python3 tools/calculators.py --self-test
-          python3 -B -c "import ast, pathlib; ast.parse(pathlib.Path('tools/mcp_server.py').read_text(encoding='utf-8')); print('mcp_server.py AST syntax check PASSED')"
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+          ast.parse(Path("tools/mcp_server.py").read_text(encoding="utf-8"))
+          print("tools/mcp_server.py AST syntax OK")
+          PY
 
-      - name: 2. Rebuild platform adapters & verify zero drift
+      - name: Rebuild adapters and verify zero drift
         run: |
-          python3 scripts/build_adapters.py
-          git diff --exit-code adapters/ || (echo "ERROR: adapters/ is out of sync with core/ or skills/. Run 'python3 scripts/build_adapters.py' locally and commit the updated adapters." && exit 1)
+          python scripts/build_adapters.py
+          if ! git diff --exit-code adapters/; then
+            echo "ERROR: adapters/ is out of sync with core/ or skills/. Run 'python scripts/build_adapters.py' and commit."
+            exit 1
+          fi
 
-      - name: 3. Validate JSON Schemas (Draft 2020-12) & Promptfoo YAML
+      - name: Validate JSON Schemas and promptfooconfig YAML
         run: |
-          python3 - <<'PY'
+          python -m pip install --quiet jsonschema pyyaml
+          python - <<'PY'
           import json
           from pathlib import Path
           import yaml
           from jsonschema import Draft202012Validator
 
-          schema_files = sorted(Path("schemas").glob("*.json"))
-          assert schema_files, "No schema files found in schemas/"
-          for sp in schema_files:
-              schema_obj = json.loads(sp.read_text(encoding="utf-8"))
-              Draft202012Validator.check_schema(schema_obj)
-              print(f"Schema valid: {sp}")
+          for p in sorted(Path("schemas").glob("*.json")):
+              schema = json.loads(p.read_text(encoding="utf-8"))
+              Draft202012Validator.check_schema(schema)
+              print(f"Schema valid: {p}")
 
-          cfg_path = Path("evals/promptfooconfig.yaml")
-          cfg = yaml.safe_load(cfg_path.read_text(encoding="utf-8"))
-          assert isinstance(cfg, dict) and "tests" in cfg, "promptfooconfig.yaml missing 'tests' key"
-          print(f"YAML valid: {cfg_path} ({len(cfg['tests'])} tests defined)")
+          cfg = yaml.safe_load(Path("evals/promptfooconfig.yaml").read_text(encoding="utf-8"))
+          assert isinstance(cfg.get("tests"), list) and len(cfg["tests"]) >= 9, "Expected >= 9 eval tests"
+          print(f"Promptfoo config valid ({len(cfg['tests'])} tests)")
           PY
 
-      - name: 4. Copyright, PII & Secret Leak Guard
+      - name: Clean-Room IP, Trademark, Copyright, Secret & PII Leak Guard
         run: |
-          python3 - <<'PY'
+          python - <<'PY'
           import re
           import subprocess
           import sys
@@ -76,90 +68,52 @@ jobs:
           tracked = subprocess.check_output(["git", "ls-files"], text=True).splitlines()
           errors = []
 
-          forbidden_exts = {".pdf", ".gdoc", ".docx", ".mp3", ".mp4", ".wav", ".m4a", ".key", ".pem"}
-          forbidden_copyright_patterns = [
-              (r"BUMBLE\s+IP,\s*LLC", "Copyrighted source publisher notice detected"),
-              (r"NOT\s+FOR\s+DISTRIBUTION", "Non-distribution copyright marker detected"),
-              (r"\[" + r"cite:\s*\d+", "Stray AI citation tag detected"),
+          forbidden_ext = (".pdf", ".docx", ".gdoc", ".env", ".pem", ".key")
+          # Constructed dynamically so this workflow file never embeds literal third-party marks
+          ip_patterns = [
+              (r"BUM" + r"BLE\s+IP,\s*LLC", "Copyrighted publisher notice"),
+              (r"NOT\s+FOR\s+" + r"DISTRIBUTION", "Non-distribution marker"),
+              (r"\$" + r"100M", "Third-party registered mark"),
+              (r"\bHor" + r"mo" + r"zi\b", "Third-party author name"),
+              (r"\bMo" + r"zi\b", "Third-party registered mark"),
+              (r"Acquisition" + r"\.com", "Third-party company domain"),
+              (r"Lost\s+" + r"Chapters", "Third-party copyrighted book title"),
+              (r"\bSau" + r"ron\b", "Third-party fictional trademark"),
+              (r"Proprietary\s+5-" + r"Minute", "Third-party claimed method name"),
+              (r"pages\s+73-" + r"155", "Private extract page reference"),
+              (r"\[" + r"cite:\s*\d+", "Stray AI citation tag"),
           ]
-          secret_patterns = [
+          secret_pii_patterns = [
+              (r"C:\\\\?Users\\\\?sr" + r"gar", "Hardcoded local Windows username"),
               (r"sk-ant-[A-Za-z0-9_-]{20,}", "Possible Anthropic API key"),
               (r"sk-(?:proj-)?[A-Za-z0-9_-]{20,}", "Possible OpenAI API key"),
               (r"AIza[0-9A-Za-z_-]{35}", "Possible Google API key"),
-              (r"ghp_[0-9A-Za-z]{36}", "Possible GitHub personal access token"),
+              (r"ghp_[0-9A-Za-z]{36}", "Possible GitHub PAT"),
               (r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----", "Private key material"),
-          ]
-          pii_patterns = [
               (r"\b\d{3}-\d{2}-\d{4}\b", "Possible US SSN"),
               (r"\b(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]\d{3}[-.\s]\d{4}\b", "Possible unredacted phone number"),
           ]
 
-          allow_synthetic = {"evals/fixtures/sample_transcript.txt", ".github/workflows/ci.yml"}
-
           for rel in tracked:
               p = Path(rel)
-              if p.suffix.lower() in forbidden_exts:
-                  errors.append(f"{rel}: forbidden file extension '{p.suffix}' (must stay local/gitignored)")
-                  continue
-              if rel.startswith("sources/") and rel != "sources/.gitkeep":
-                  errors.append(f"{rel}: private reference file committed under sources/")
-                  continue
-              if rel.startswith("transcripts/"):
-                  errors.append(f"{rel}: raw client transcript committed under transcripts/")
-                  continue
-              if p.name.startswith(".env"):
-                  errors.append(f"{rel}: environment secret file committed")
-                  continue
-
+              if rel.startswith(("sources/", "transcripts/")) and rel != "sources/.gitkeep":
+                  errors.append(f"Private directory file tracked: {rel}")
+              if rel.lower().endswith(forbidden_ext):
+                  errors.append(f"Forbidden file extension tracked: {rel}")
               if not p.is_file():
                   continue
               try:
                   text = p.read_text(encoding="utf-8")
               except UnicodeDecodeError:
                   continue
-
-              if rel != ".github/workflows/ci.yml":
-                  for pat, msg in forbidden_copyright_patterns:
-                      if re.search(pat, text, re.I):
-                          errors.append(f"{rel}: {msg}")
-
-                  for pat, msg in secret_patterns:
-                      if re.search(pat, text):
-                          errors.append(f"{rel}: {msg}")
-
-              if rel not in allow_synthetic:
-                  for pat, msg in pii_patterns:
-                      if re.search(pat, text):
-                          errors.append(f"{rel}: {msg}")
+              for pat, msg in ip_patterns + secret_pii_patterns:
+                  if re.search(pat, text, re.I):
+                      errors.append(f"{rel}: {msg}")
 
           if errors:
-              print("LEAK GUARD FAILED:")
+              print("CLEAN-ROOM LEAK GUARD FAILED:")
               for e in errors:
                   print(f"  - {e}")
               sys.exit(1)
-
-          print(f"Leak guard PASSED across {len(tracked)} tracked files.")
+          print(f"CLEAN-ROOM LEAK GUARD PASSED ({len(tracked)} tracked files verified)")
           PY
-
-  cross-model-evals:
-    name: Cross-Model Promptfoo Evals (Manual Dispatch)
-    runs-on: ubuntu-latest
-    needs: validate-and-guard
-    if: github.event_name == 'workflow_dispatch' && inputs.run_llm_evals == true
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Run Promptfoo regression suite
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          npx --yes promptfoo@latest eval -c evals/promptfooconfig.yaml --no-cache

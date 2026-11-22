@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Optional MCP (Model Context Protocol) server exposing deterministic playbook calculators.
+"""Optional MCP (Model Context Protocol) server exposing deterministic playbook calculators (v4.0).
 
 Requires: pip install mcp
-Run:      python tools/mcp_server.py
+Run:      python tools/mcp_server.py   (or: python -m tools.mcp_server)
 Works with Claude Desktop, Claude Code, Gemini CLI, Cursor, and local MCP clients.
 """
 
@@ -10,19 +10,29 @@ from __future__ import annotations
 
 from typing import Any
 from mcp.server.fastmcp import FastMCP
-from calculators import (
-    audit_script_metrics,
-    calc_cfa_metrics,
-    calc_ote_and_tac,
-    calc_value_grid,
-    calc_van_westendorp,
-)
+
+try:
+    from tools.calculators import (
+        audit_script_metrics,
+        calc_offer_matrix,
+        calc_ote_and_tac,
+        calc_sfa_metrics,
+        calc_van_westendorp,
+    )
+except ImportError:
+    from calculators import (  # type: ignore[no-redef]
+        audit_script_metrics,
+        calc_offer_matrix,
+        calc_ote_and_tac,
+        calc_sfa_metrics,
+        calc_van_westendorp,
+    )
 
 mcp = FastMCP("apex-sales-playbook")
 
 
 @mcp.tool()
-def cfa_unit_economics(
+def sfa_unit_economics(
     price: float,
     direct_fulfillment_cost: float,
     ad_spend: float,
@@ -36,8 +46,8 @@ def cfa_unit_economics(
     gp_30d: float | None = None,
     channels: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    """Compute Full-Loaded CAC (blended & per channel), GP, Gross Margin, LTGP, PPD, 30D Cash, and CFA Level."""
-    return calc_cfa_metrics(
+    """Compute Full-Loaded CAC (blended & per channel), GP, Gross Margin, LTGP, PPD, 30D Cash, and SFA Tier."""
+    return calc_sfa_metrics(
         price=price,
         direct_fulfillment_cost=direct_fulfillment_cost,
         ad_spend=ad_spend,
@@ -54,13 +64,13 @@ def cfa_unit_economics(
 
 
 @mcp.tool()
-def value_grid_ltv(
+def offer_matrix_ltv(
     entering_prospects: int,
     offers: list[dict[str, Any]],
     sales_and_lead_working_labor_cost: float = 0.0,
 ) -> dict[str, Any]:
-    """Calculate non-linear Value Grid blended 30D LTV net of sales and lead-working labor."""
-    return calc_value_grid(
+    """Calculate Non-Linear Offer Matrix blended 30D LTV net of sales and lead-working labor."""
+    return calc_offer_matrix(
         entering_prospects=entering_prospects,
         offers=offers,
         sales_and_lead_working_labor_cost=sales_and_lead_working_labor_cost,

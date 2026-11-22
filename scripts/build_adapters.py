@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compile canonical core/ + skills/ into platform-specific adapters with lint checks.
+"""Compile canonical core/ + skills/ into platform-specific adapters with lint checks (v4.0).
 
 Outputs:
   - adapters/master-gem-prompt.md         (Gemini Gems, Claude Projects, Custom GPTs)
@@ -9,6 +9,7 @@ Outputs:
   - adapters/ollama/Modelfile             (Ready-to-run Ollama Modelfile using core router + guardrails)
 
 Also validates:
+  - Removes stale legacy adapter files not present in SKILL_ORDER
   - No corrupted/stripped math thresholds (blank spaces before 'minutes', 'calls', empty '()')
   - Pure ASCII punctuation in operators (no stray Unicode math arrows/inequalities/em-dashes)
   - Consistent LF line endings across Windows & Linux CI (zero git diff drift)
@@ -26,8 +27,8 @@ SKILLS_DIR = REPO_ROOT / "skills"
 ADAPTERS_DIR = REPO_ROOT / "adapters"
 
 SKILL_ORDER = [
-    "cfa-offer-architect",
-    "vssl-script-engineer",
+    "sfa-offer-architect",
+    "vsl-script-engineer",
     "sales-recruiting-bootcamp",
     "sales-floor-director",
     "transcript-audit-mode",
@@ -82,6 +83,12 @@ def build() -> int:
     by_mode_dir = ADAPTERS_DIR / "system-prompts-by-mode"
     by_mode_dir.mkdir(parents=True, exist_ok=True)
 
+    expected_files = {f"{name}.md" for name in SKILL_ORDER}
+    for existing in by_mode_dir.glob("*.md"):
+        if existing.name not in expected_files:
+            existing.unlink()
+            print(f"Removed stale adapter {existing.relative_to(REPO_ROOT)}")
+
     for skill_name in SKILL_ORDER:
         skill_path = SKILLS_DIR / skill_name / "SKILL.md"
         raw = read_clean(skill_path)
@@ -89,7 +96,6 @@ def build() -> int:
         all_issues.extend(lint_markdown(f"skills/{skill_name}/SKILL.md", raw))
         master_sections.append(body)
 
-        # Standalone single-mode prompt preserving YAML frontmatter for Gemini Skill Management
         header = f"{frontmatter}\n\n" if frontmatter else ""
         single_mode = f"{header}{router}\n\n{guardrails}\n\n---\n\n{body}\n"
         out_path = by_mode_dir / f"{skill_name}.md"
