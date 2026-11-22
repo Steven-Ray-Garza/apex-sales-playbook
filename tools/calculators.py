@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
-"""Deterministic financial math and spoken-script linter for Apex Sales Playbook.
+"""Deterministic financial math, Van Westendorp pricing, and spoken-script linter for Apex Sales Playbook.
 
 Zero external dependencies (Python 3.10+ stdlib only) so any agent, CLI, MCP server,
 or local LLM runner can execute exact unit economics without hallucinated math.
 
 Usage examples:
-  python3 tools/calculators.py --self-test
-  python3 tools/calculators.py cfa --json '{"price":3000,"direct_fulfillment_cost":600,"ad_spend":20000,"media_creative_payroll":4000,"software_cost":1000,"sales_salaries_commissions":10000,"new_customers":10,"revenue_model":"recurring","monthly_churn_rate":0.05,"gp_30d":7500}'
-  python3 tools/calculators.py value-grid --json '{"entering_prospects":10,"offers":[{"name":"Trial + Core","buyers":8,"gp_30d_per_buyer":75}],"sales_and_lead_working_labor_cost":600}'
-  python3 tools/calculators.py ote --json '{"sales_motion":"inbound","ote_annual":100000,"expected_weekly_closes":12,"annual_rep_gp":250000,"activation_rate":0.5}'
-  python3 tools/calculators.py lint-script --file path/to/script.txt
+  python tools/calculators.py --self-test
+  python tools/calculators.py cfa --json '{"price":3000,"direct_fulfillment_cost":600,"ad_spend":20000,"new_customers":10,"revenue_model":"recurring","monthly_churn_rate":0.05}'
+  python tools/calculators.py value-grid --json '{"entering_prospects":10,"offers":[{"name":"Trial","buyers":8,"gp_30d_per_buyer":75}],"sales_and_lead_working_labor_cost":600}'
+  python tools/calculators.py ote --json '{"sales_motion":"inbound","ote_annual":100000,"expected_weekly_closes":12,"annual_rep_gp":250000,"activation_rate":0.5}'
+  python tools/calculators.py van-westendorp --json '{"responses":[{"too_cheap":100,"bargain":250,"expensive":500,"too_expensive":800},{"too_cheap":150,"bargain":300,"expensive":600,"too_expensive":900}]}'
+  python tools/calculators.py lint-script --file path/to/script.txt
 """
 
 from __future__ import annotations
@@ -178,6 +179,113 @@ def calc_value_grid(
     }
 
 
+def _find_curve_intersection(
+    prices: list[float],
+    curve_a: list[float],
+    curve_b: list[float],
+) -> float:
+    """Linearly interpolate the price where curve_a(p) intersects curve_b(p)."""
+    diffs = [a - b for a, b in zip(curve_a, curve_b)]
+    for i in range(len(prices) - 1):
+        d1, d2 = diffs[i], diffs[i + 1]
+        if d1 == 0:
+            return round(prices[i], 2)
+        if (d1 < 0 < d2) or (d1 > 0 > d2):
+            p1, p2 = prices[i], prices[i + 1]
+            t = abs(d1) / (abs(d1) + abs(d2))
+            return round(p1 + t * (p2 - p1), 2)
+    min_idx = min(range(len(diffs)), key=lambda idx: abs(diffs[idx]))
+    return round(prices[min_idx], 2)
+
+
+def _solve_van_westendorp_cohort(responses: list[dict[str, Any]]) -> dict[str, Any]:
+    """Compute PMC, PME, OPP, IDP, and Acceptable Price Range for a single cohort."""
+    valid = []
+    for r in responses:
+        tc = float(r["too_cheap"])
+        bg = float(r["bargain"])
+        ex = float(r["expensive"])
+        te = float(r["too_expensive"])
+        if tc <= bg <= ex <= te:
+            valid.append((tc, bg, ex, te))
+
+    if len(valid) < 2:
+        raise ValueError("Need at least 2 logically ordered responses (too_cheap <= bargain <= expensive <= too_expensive)")
+
+    n = len(valid)
+    grid = sorted({p for row in valid for p in row})
+    # Cumulative distribution curves per standard Van Westendorp Price Sensitivity Meter:
+    # too_cheap_pct(p):     % of respondents who think price <= p is too cheap (decreasing as p rises)
+    # bargain_pct(p):       % of respondents who think price <= p is a bargain (decreasing as p rises)
+    # expensive_pct(p):     % of respondents who think price >= p is expensive (increasing as p rises)
+    # too_expensive_pct(p): % of respondents who think price >= p is too expensive (increasing as p rises)
+    tc_curve = [sum(1 for row in valid if row[0] >= p) / n for p in grid]
+    bg_curve = [sum(1 for row in valid if row[1] >= p) / n for p in grid]
+    ex_curve = [sum(1 for row in valid if row[2] <= p) / n for p in grid]
+    te_curve = [sum(1 for row in valid if row[3] <= p) / n for p in grid]
+
+    pmc = _find_curve_intersection(grid, tc_curve, ex_curve)  # Point of Marginal Cheapness
+    pme = _find_curve_intersection(grid, te_curve, bg_curve)  # Point of Marginal Expensiveness
+    opp = _find_curve_intersection(grid, tc_curve, te_curve)  # Optimal Price Point
+    idp = _find_curve_intersection(grid, bg_curve, ex_curve)  # Indifference Price Point
+
+    low_bound = min(pmc, pme)
+    high_bound = max(pmc, pme)
+
+    return {
+        "valid_responses": n,
+        "dropped_inconsistent_responses": len(responses) - n,
+        "point_of_marginal_cheapness_pmc": pmc,
+        "optimal_price_point_opp": opp,
+        "indifference_price_point_idp": idp,
+        "point_of_marginal_expensiveness_pme": pme,
+        "acceptable_price_range": [low_bound, high_bound],
+        "recommended_band_automated_checkout": [low_bound, min(high_bound, max(opp, idp))],
+        "recommended_band_high_friction_sales": [max(low_bound, idp), high_bound],
+    }
+
+
+def calc_van_westendorp(
+    *,
+    responses: list[dict[str, Any]],
+    segment_field: str | None = None,
+) -> dict[str, Any]:
+    """Run Van Westendorp 4-question pricing analysis (overall + optional avatar segmentation)."""
+    if not responses:
+        raise ValueError("responses list cannot be empty")
+
+    overall = _solve_van_westendorp_cohort(responses)
+    segments_out: dict[str, Any] = {}
+    multi_avatar_alert = None
+
+    if segment_field:
+        grouped: dict[str, list[dict[str, Any]]] = {}
+        for r in responses:
+            key = str(r.get(segment_field, "unclassified"))
+            grouped.setdefault(key, []).append(r)
+
+        opps = []
+        for seg_name, rows in sorted(grouped.items()):
+            if len(rows) >= 2:
+                seg_res = _solve_van_westendorp_cohort(rows)
+                segments_out[seg_name] = seg_res
+                opps.append(seg_res["optimal_price_point_opp"])
+            else:
+                segments_out[seg_name] = {"skipped": f"Only {len(rows)} response(s); need >= 2."}
+
+        if len(opps) >= 2 and min(opps) > 0 and (max(opps) / min(opps)) >= 1.75:
+            multi_avatar_alert = (
+                "MULTI-AVATAR SPLIT DETECTED: Optimal price points diverge by >= 1.75x across segments "
+                "(double-Gaussian curve). Price and message each avatar separately rather than averaging."
+            )
+
+    return {
+        "overall": overall,
+        "segments": segments_out if segment_field else None,
+        "multi_avatar_alert": multi_avatar_alert,
+    }
+
+
 def calc_ote_and_tac(
     *,
     sales_motion: str = "inbound",
@@ -320,6 +428,19 @@ def _self_test() -> None:
     assert vg["gross_30d_gp_total"] == 600.0
     assert vg["net_30d_ltv_per_prospect"] == 0.0
 
+    vw = calc_van_westendorp(
+        responses=[
+            {"segment": "smb", "too_cheap": 500, "bargain": 1000, "expensive": 2000, "too_expensive": 3000},
+            {"segment": "smb", "too_cheap": 600, "bargain": 1200, "expensive": 2200, "too_expensive": 3500},
+            {"segment": "enterprise", "too_cheap": 3000, "bargain": 6000, "expensive": 12000, "too_expensive": 18000},
+            {"segment": "enterprise", "too_cheap": 4000, "bargain": 8000, "expensive": 15000, "too_expensive": 22000},
+        ],
+        segment_field="segment",
+    )
+    assert vw["overall"]["valid_responses"] == 4
+    assert vw["multi_avatar_alert"] is not None
+    assert vw["segments"]["enterprise"]["optimal_price_point_opp"] > vw["segments"]["smb"]["optimal_price_point_opp"]
+
     comp = calc_ote_and_tac(
         sales_motion="inbound",
         ote_annual=100000,
@@ -347,7 +468,7 @@ def main() -> None:
     parser.add_argument("--self-test", action="store_true", help="Run built-in verification assertions")
     sub = parser.add_subparsers(dest="cmd")
 
-    for name in ["cfa", "value-grid", "ote"]:
+    for name in ["cfa", "value-grid", "ote", "van-westendorp"]:
         p = sub.add_parser(name)
         p.add_argument("--json", required=True, help="JSON payload of function keyword arguments")
 
@@ -366,6 +487,8 @@ def main() -> None:
         print(json.dumps(calc_value_grid(**json.loads(args.json)), indent=2))
     elif args.cmd == "ote":
         print(json.dumps(calc_ote_and_tac(**json.loads(args.json)), indent=2))
+    elif args.cmd == "van-westendorp":
+        print(json.dumps(calc_van_westendorp(**json.loads(args.json)), indent=2))
     elif args.cmd == "lint-script":
         script_txt = Path(args.file).read_text(encoding="utf-8")
         pitch_txt = Path(args.pitch_file).read_text(encoding="utf-8") if args.pitch_file else None

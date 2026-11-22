@@ -1,14 +1,17 @@
 ---
 name: sales-recruiting-bootcamp
-description: Architect high-output sales recruiting funnels, sales-letter job postings, 3 Ps + 1 candidate screening (with deal velocity and traffic temperature matching), sales manager scorecards, 50/50 OTE and self-gen compensation plans with accelerators, 14-day SDR bootcamps, 5-step roleplay and 6-step game-tape loops, 7-dial/4-day cadences, ramp/cut gates, and SDR-to-closer farm systems. Use when hiring setters, closers, or sales managers, designing comp plans, building onboarding bootcamps, or structuring rep promotion paths. Do NOT use for offer math (use cfa-offer-architect), VSSL/call scripts (use vssl-script-engineer), floor ops (use sales-floor-director), transcript audits (use transcript-audit-mode), or live interactive roleplay (use roleplay-sparring-partner).
+description: Architect high-output sales recruiting funnels, sales-letter job postings, Unicorn-to-3-Specialist role decomposition, Customer-to-Talent pipeline mirroring, 3 Ps + 1 candidate screening (with deal velocity and traffic temperature matching), sales manager scorecards, 50/50 OTE and self-gen compensation plans with accelerators, 14-day SDR bootcamps, 5-step roleplay and 6-step game-tape loops, 7-dial/4-day cadences, ramp/cut gates, and SDR-to-closer farm systems. Use when hiring setters, closers, or sales managers, designing comp plans, building onboarding bootcamps, or structuring rep promotion paths. Do NOT use for offer math (use cfa-offer-architect), VSSL/call scripts (use vssl-script-engineer), floor ops (use sales-floor-director), transcript audits (use transcript-audit-mode), or live interactive roleplay (use roleplay-sparring-partner).
 ---
 
 # Mode 3: Recruiting, Compensation, and Bootcamp Builder
 
-## 1. Hiring Order, Screening, Manager Scorecard, and Comp Branching
+## 1. Role Design, Hiring Order, Screening, Manager Scorecard, and Comp Branching
 
 Use `tools/calculators.py` (`calc_ote_and_tac`) whenever tool calling is enabled.
 
+- **Unicorn Decomposition & Customer-to-Talent Pipeline Mirror:**
+  - *Stop Hiring Unicorns (Rhino + Horse + Fireflies):* Break founder delegation paralysis by splitting one mythical all-in-one replacement into 3 teachable specialists (horn = rhino, body = horse, sparkle = fireflies) and teaching each the distilled right path in `1/10th` the time.
+  - *1:1 Supply/Demand Pipeline Mirror:* Treat talent identically to customers (`App Gen -> App Nurture -> Scripted Interview -> 30/60/90 Onboarding -> Retention -> Ascension`) with ongoing internal marketing and referral incentives.
 - **Hiring Order & Paths:**
   - *Low lead inflow:* Hire SDRs first to generate demand.
   - *High inbound inflow:* Hire closers first.
@@ -37,7 +40,7 @@ Use `tools/calculators.py` (`calc_ote_and_tac`) whenever tool calling is enabled
   6. **Culture "Unsell" Call:** Challenge on role intensity, probe `2-year` and `5-10-year` goals, deliver blunt weakness feedback to test ego, and resell vision only if they pass.
   7. **Job Offer + Vision VSSL + Pre-Work:** Issue offer, relocation/start date, Vision VSSL, and full `26,000-word` sales handbook for pre-Day-1 study.
 
-## 3. 14-Day SDR Bootcamp, Training Loops, Ramp Gates, and Farm Promotion
+## 3. 14-Day SDR Bootcamp, Training Loops, Ramp Gates, Retention, and Farm Promotion
 
 - **Core Training Law (Modeling + Roleplay Only):** Humans learn sales in only two ways - watching someone do it (modeling) or doing it themselves (roleplay). Standardize every training session on two exact loops:
   - *5-Step Roleplay Loop:* **Frame** (what/how/why) -> **Model** (manager demonstrates live) -> **Copy** (rep mimics) -> **Practice** (repeat with zero manager frustration until automatic) -> **Recap**.
@@ -50,5 +53,5 @@ Use `tools/calculators.py` (`calc_ote_and_tac`) whenever tool calling is enabled
   - **Fully Ramped SDR (Within 2 Months):** `12+ sets/week` (`50 sets/month`), `>= 70%` show rate, `3+ closes/week` (`10+ closes/month` at `5:1` set-to-close; `13+ deals/month` unlocks top tier).
 - **7-Dial / 4-Day Cadence:** Max `2-line` dialer, compliant local numbers, double-dials, instant opt-in SMS (verified PEWC per Guardrail #6). Day 1: `3 double-dials + 1 email + 1 SMS`; Day 2: `2 double-dials`; Day 3: `1 double-dial + 1 email + 1 SMS`; Day 4: `1 double-dial`; instant outbound dial on any email reply.
 - **Cut vs. PIP:** Cut immediately for toxicity, Day-1 script tampering, dial-skipping, or feedback defensiveness. Use a `2-week` coaching plan only for coachable reps outworking the floor who slip behind gates for 1 week.
-- **Career Path, Lifetime Volume Milestones, and Lead-Tier Perks:** Split titles into frequent milestones (`Junior -> Standard -> Senior` SDR/Closer) tied to cumulative **lifetime volume goals** (`100 / 300 / 500` deals) rather than tenure; rotate **Tier 3 -> Tier 2 -> Tier 1** lead pools monthly at manager discretion with hourly Slack speed-to-lead alerts; offer IC, Leadership, and Process/Systems tracks.
+- **Career Path, Lifetime Volume Milestones, A-Player Retention, and Lead-Tier Perks:** Split titles into frequent milestones (`Junior -> Standard -> Senior` SDR/Closer) tied to cumulative **lifetime volume goals** (`100 / 300 / 500` deals) rather than tenure; rotate **Tier 3 -> Tier 2 -> Tier 1** lead pools monthly at manager discretion with hourly Slack speed-to-lead alerts; offer IC, Leadership, and Process/Systems tracks. For top A-players (and whale clients), ask directly: `"What would it take for you to work here forever?"` (or `"to be your sole provider forever?"`) and engineer the conditions to lock them in.
 - **SDR-to-Closer Farm Path:** Sustain `1 full quarter` KPIs + `100%` CRM compliance (eligibility, not guarantee) -> Do both jobs (`1 self-set/day`) -> `7-day` closer bootcamp + `7-14 day` stimulant detox -> Closer Gate 1 (`2-3 self-set closes/week` for `3 straight weeks`) -> Low/Med/High Outbound -> Inbound (sustain `>= 60%` show, `>= 90%` offer, `> 30%` close).

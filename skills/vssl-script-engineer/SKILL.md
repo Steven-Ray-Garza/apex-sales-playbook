@@ -1,17 +1,19 @@
 ---
 name: vssl-script-engineer
-description: Engineer high-converting Video Sales Letters (VSSL Sandwich), BANT qualification forms, Intro-Disco-Pitch-Close call scripts with vocal and pause tags, active-listening mirroring, enterprise 80/20 multi-call scripts, the full 12-analogy bank, AAA objection handling loops, BAMFAM follow-ups, and 3-step referral scripts. Use when writing or auditing VSSL scripts, pre-call indoctrination funnels, sales call scripts, objection trees, or closing sequences. Do NOT use for offer math (use cfa-offer-architect), recruiting/bootcamps (use sales-recruiting-bootcamp), floor ops (use sales-floor-director), transcript audits (use transcript-audit-mode), or live interactive roleplay (use roleplay-sparring-partner).
+description: Engineer high-converting Video Sales Letters (VSSL Sandwich), 2x2 operant-conditioning copy matrices, proof-of-effort content moats, BANT qualification forms, Intro-Disco-Pitch-Close call scripts with vocal and pause tags, active-listening mirroring, enterprise 80/20 multi-call scripts, the full 12-analogy bank, AAA objection handling loops, BAMFAM follow-ups, and 3-step referral scripts. Use when writing or auditing VSSL scripts, pre-call indoctrination funnels, sales call scripts, objection trees, or closing sequences. Do NOT use for offer math (use cfa-offer-architect), recruiting/bootcamps (use sales-recruiting-bootcamp), floor ops (use sales-floor-director), transcript audits (use transcript-audit-mode), or live interactive roleplay (use roleplay-sparring-partner).
 ---
 
 # Mode 2: VSSL Sandwich, Script, and Objection Engineer
 
-## 2A. VSSL Sandwich, Living Updates, and BANT Qualification
+## 2A. VSSL Sandwich, Persuasion Copy Matrix, and BANT Qualification
 
 - **VSSL 1 - Pre-Booking (High Friction):** Keep short (`3-7 minutes`) to protect opt-in flow. Pair with **BANT** qualification fields (Budget, Authority, Need, Timing) and proof stacked under the scheduler.
 - **VSSL 2 - Post-Booking (Zero Friction):** Make comprehensive (`10-22+ minutes`) to sell the *show* and pre-handle top objections. Frame watching as a time-saver: `"Watch this 10-minute video before our call - it will save us 35 minutes so we can focus entirely on your situation."`
 - **VSSL 3 - Mid-Process (Multi-Call or In-Person iPad):** Deploy between intake/walk-through and quote presentation. Never email quotes cold.
 - **Living VSSL and Avatar Paths:** Treat every VSSL as a living document - splice in new objection FAQs whenever floor reps report a recurring new objection (fed from Mode 5C Weekly Flywheel), and build separate VSSL paths per avatar.
 - **5-Part VSSL Blueprint:** (1) `60-Second` Intro (Promise, Pain, varied Proof, Plan, Visual Roadmap) -> (2) Old Way vs. New Way (Unique Mechanism) -> (3) Objection FAQ Gauntlet 1-N (What they think -> Why wrong -> What is right -> Proof) -> (4) Personalized Diagnostic CTA (low-friction customization question proving consumption) -> (5) Proof Gauntlet (`10-15 minutes` of compliant before/after case studies on the back half).
+- **2x2 Operant-Conditioning Copy Matrix ("Playing the Don't"):** Ping-pong ads, VSSLs, and closes across all four quadrants: **Do it -> More Good (`+/+`)** and **Less Bad (`+/-`)** vs. **Don't do it -> Less Good (`-/+`)** and **More Bad (`-/-`)** ("playing the don't").
+- **Reality & Proof-of-Effort Moat:** Answer `"Why should I listen to you?"` in the first seconds. When lacking massive outcome proof yet, document **proof of effort** with real stakes (e.g., record a full `12-hour` sales day and clip the sharpest `3-minute` live objection overcome).
 
 ## 2B. Call Script Engine (`Intro -> Disco -> Pitch -> Close`)
 

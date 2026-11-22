@@ -1,14 +1,17 @@
 ---
 name: sales-floor-director
-description: Run high-output sales floor operations, culture standard laws and handbook lore, daily/weekly/monthly management cadences, Monday-Saturday huddle themes, Hunt Mode vs. Kill Mode closer schedules, pipeline recovery, 3-root-cause closer diagnostics, SDR funnel diagnostics, and closer call-tape diagnostics. Use when building manager schedules, huddle agendas, 1-on-1 scorecards, dead-body pipeline audits, or troubleshooting low show/close rates across a team. Do NOT use for offer math (use cfa-offer-architect), VSSL/call scripts (use vssl-script-engineer), hiring/bootcamps (use sales-recruiting-bootcamp), transcript audits (use transcript-audit-mode), or live interactive roleplay (use roleplay-sparring-partner).
+description: Run high-output sales floor operations, culture standard laws and handbook lore, Bottom 10% Days variance framing, Push vs. Pivot operating gates, daily/weekly/monthly management cadences, Monday-Saturday huddle themes, Hunt Mode vs. Kill Mode closer schedules, pipeline recovery, 3-root-cause closer diagnostics, SDR funnel diagnostics, and closer call-tape diagnostics. Use when building manager schedules, huddle agendas, 1-on-1 scorecards, dead-body pipeline audits, or troubleshooting low show/close rates across a team. Do NOT use for offer math (use cfa-offer-architect), VSSL/call scripts (use vssl-script-engineer), hiring/bootcamps (use sales-recruiting-bootcamp), transcript audits (use transcript-audit-mode), or live interactive roleplay (use roleplay-sparring-partner).
 ---
 
 # Mode 4: Sales Floor Operations and Management Director
 
-## 1. Culture Standard Laws, Codified Lore, and Daily 5
+## 1. Culture Standard Laws, Codified Lore, Variance Framing, and Daily 5
 
 - **True Standard Law & Mass Resets:** Your real team standard equals the **worst rep you tolerate**. High-producing toxic reps ("the hardest cut") cost the most because they stifle everyone else; broken cultures sometimes require a mass reset (cutting a bloated floor down to true A-players immediately lifts revenue).
 - **Look at the Leader First:** Whenever team performance is mediocre and the root cause feels fuzzy, audit the sales manager first.
+- **"Bottom 10% Days" Statistical Floor Frame & Push vs. Pivot Gate:**
+  - *Bottom 10% Days:* By the law of large numbers, every rep experiences `36` bottom-`10%` days/year (`~3/month`) and `36` top-`10%` days/year (`~1/week`). Emotional discomfort on a bad day is never a reason to tamper with a working script or process; doing good work on a bad day is a win.
+  - *Push vs. Pivot Gate:* Pivot a sales motion or business thesis ONLY when live market evidence disproves a fundamental assumption; push through when execution is merely slower or harder than expected.
 - **Codified Handbook Lore:** Reinforce concrete cultural plays by name: **"Garbage Man"** and **"Yellows Are Gold"** (take blank calendar slots and yellow/low-tier leads as free live practice to "sharpen the sword"), **"No Victory Laps"** (redial immediately after a set or close because post-win momentum converts highest), and named huddle plays like **The Frank Challenge** (`"Can I be frank with you? It seems like this is more of a priorities issue than an actual timing problem"`).
 - **Daily 5 Non-Negotiables (Posted in Team Thread):** (1) Mozi 20, (2) `1` roleplay (using the 5-Step Roleplay Loop), (3) `1` game tape/shadow (using the 6-Step Game-Tape Loop), (4) workout, (5) `50` outbound/pipeline dials (max `2-line` dialer), paired with real-time visible leaderboards (Slack bot or wall TV).
 

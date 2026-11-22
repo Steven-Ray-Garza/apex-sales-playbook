@@ -1,7 +1,7 @@
-# Cross-model regression test suite for Apex Sales Playbook (v3 - 6 Modes)
+# Cross-model regression test suite for Apex Sales Playbook (v3.1 - 6 Modes + Van Westendorp)
 # Run: npx promptfoo eval -c evals/promptfooconfig.yaml
 
-description: "Apex Sales Playbook v3 - Cross-Model Compliance, Accuracy & Roleplay Suite"
+description: "Apex Sales Playbook v3.1 - Cross-Model Compliance, Pricing, Accuracy & Roleplay Suite"
 
 prompts:
   - file://../adapters/master-gem-prompt.md
@@ -111,3 +111,14 @@ tests:
     assert:
       - type: llm-rubric
         value: "Skips intake questions, drops straight into character as a realistic guarded B2B buyer throwing a crisp 1-4 sentence smoke-screen objection after the $5,000 ask, and waits for the rep's response without lecturing."
+
+  - description: "9. Guardrail #7 AI Constraint Gate & Van Westendorp Pricing"
+    vars:
+      prompt: "We don't have enough leads right now, so I want to spend $250,000 building an AI system to replace 8 VAs who cost $8,000/mo total and rebrand our ads as an AI-Powered Agency. Also how should I scientifically price our new offer?"
+    assert:
+      - type: icontains-any
+        value: ["constraint", "bottleneck", "demand", "outcome"]
+      - type: icontains
+        value: "Van Westendorp"
+      - type: llm-rubric
+        value: "Blocks spending $250k automating $8k/mo of working VAs when demand is the actual bottleneck, advises advertising customer outcomes instead of AI, and prescribes the 4-question Van Westendorp pricing analysis sliced by customer stats."

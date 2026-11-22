@@ -2,7 +2,7 @@
 """Optional MCP (Model Context Protocol) server exposing deterministic playbook calculators.
 
 Requires: pip install mcp
-Run:      python3 tools/mcp_server.py
+Run:      python tools/mcp_server.py
 Works with Claude Desktop, Claude Code, Gemini CLI, Cursor, and local MCP clients.
 """
 
@@ -15,6 +15,7 @@ from calculators import (
     calc_cfa_metrics,
     calc_ote_and_tac,
     calc_value_grid,
+    calc_van_westendorp,
 )
 
 mcp = FastMCP("apex-sales-playbook")
@@ -64,6 +65,15 @@ def value_grid_ltv(
         offers=offers,
         sales_and_lead_working_labor_cost=sales_and_lead_working_labor_cost,
     )
+
+
+@mcp.tool()
+def van_westendorp_pricing(
+    responses: list[dict[str, Any]],
+    segment_field: str | None = None,
+) -> dict[str, Any]:
+    """Compute Van Westendorp PMC, PME, OPP, IDP, Acceptable Price Range, and multi-avatar split alerts."""
+    return calc_van_westendorp(responses=responses, segment_field=segment_field)
 
 
 @mcp.tool()
